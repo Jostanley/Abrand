@@ -1,0 +1,21 @@
+{
+  "name": "ABrand AI",
+  "short_name": "ABrandAI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "description": "Generate content ideas instantly",
+  "icons": [
+    {
+      "src": "/Abrandai.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/Abrandai.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
