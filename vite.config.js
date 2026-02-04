@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa"; // ✅ MISSING IMPORT
 
 export default defineConfig({
-  base: "/Aiapp",
+  base: "/Abrand/",
   plugins: [
     react(),
     tailwindcss(),
