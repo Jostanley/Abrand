@@ -1,5 +1,4 @@
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './Component/ProtectedRoute';
 
 // Pages
@@ -11,10 +10,10 @@ import UpdatePassword from './pages/ResetPassword.jsx'
 import BrandSetup from './Component/Brandsetup';
 import CreateContent from './Component/CreateContent.jsx'
 import ContentPage from './Component/ContentPage.jsx'
+
 function App() {
   return (
-  
-      <HashRouter>
+        <BrowserRouter>
         <Routes>
           {/* Public routes */}
           <Route path = '/' element ={<CreateContent />}/>
@@ -33,7 +32,7 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmail />} />
     
         </Routes>
-    </HashRouter>
+    </BrowserRouter>
   
   );
 }

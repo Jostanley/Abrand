@@ -55,7 +55,6 @@ const installApp = async () => {
         data: { session },
         error: sessionError,
       } = await supabase.auth.getSession();
-
       if (sessionError || !session) {
         console.warn("No active session");
         return;
@@ -83,16 +82,18 @@ const installApp = async () => {
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Sync failed");
-      }
+        alert("error")
+      } 
        
       const newdata = await res.json();
-            alert(newdata.subscription?.plan)
+            alert("working")
       setUserId(newdata.user?.id);
       setUserEmail(newdata.user?.email);
       setPlan(newdata.subscription?.plan);
 
-
+      
     } catch (err) {
+      alert(err.message)
       console.error(err.message);
     }
   };
