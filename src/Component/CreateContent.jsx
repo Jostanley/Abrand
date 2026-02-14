@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { logOut } from "../Service/authService";
 
-const API_URL = "http://localhost:8000"; // change if deployed
+const API_URL = "https://abrandai.onrender.com"; // change if deployed
 
 function CreateContent() {
   const navigate = useNavigate();

@@ -20,7 +20,7 @@ function subscription(){
     }
   // Cancel subscription function
   const cancelSubscription = async () => {
-    await fetch("http://localhost:8000/cancel-subscription", {
+    await fetch("https://abrandai.onrender.com/cancel-subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: user.id }),
