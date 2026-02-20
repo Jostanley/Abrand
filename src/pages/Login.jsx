@@ -38,7 +38,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#0f0f0f] text-white">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[#0f0f0f] text-white relative">
       <div className="w-full max-w-md bg-[#0f0f0f] p-6 rounded-xl shadow-md">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
@@ -75,7 +75,10 @@ function Login() {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-
+        {loading &&
+       <div className={"w-3/4 h-1/5 bg-gray-700 absolute z-100 flex align-center justify-center py-15 text-2xl"}>
+         <div>logging in. wait...</div>
+       </div>}
         <div className="w-full max-w-md mt-6 p-6 rounded-xl shadow-md text-white-700 flex justify-between font-semibold">
           <button onClick ={()=>navigate('/resetpassword')}>Forgotten password</button>
           <button onClick={() => navigate('/signup')}>Register</button>

@@ -18,7 +18,7 @@ const [showInstall, setShowInstall] = useState(false);
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+const [login, setLogin] = useState(false)
   // Subscription states
   const [plan, setPlan] = useState("free");
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -49,7 +49,7 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      
+      setLoading(true)
       // 1️⃣ Get session
       const {
         data: { session },
@@ -86,11 +86,12 @@ const installApp = async () => {
       } 
        
       const newdata = await res.json();
-            alert("working")
+      
+          setLogin(true)
       setUserId(newdata.user?.id);
       setUserEmail(newdata.user?.email);
       setPlan(newdata.subscription?.plan);
-
+        
       
     } catch (err) {
       alert(err.message)
@@ -198,12 +199,12 @@ const startSubscription = (methods) => {
           </button>
 
           <button
-            onClick={() => navigate("/subscription")}
+            onClick={() => navigate("/contentpage")}
             className="w-full px-4 py-2 text-sm text-left hover:bg-[#2a2a2a]"
           >
             My Content
           </button>
-
+     { login ?
           <button
             onClick={async () => {
               await logOut();
@@ -212,7 +213,10 @@ const startSubscription = (methods) => {
             className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
           >
             Logout
-          </button>
+          </button>:
+          <button onClick = {()=>navigate('/login')}
+          className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]">login</button>
+     }
           <button onClick ={toggleText}className ="absolute right-1">close</button>
         </div>
       )}
@@ -220,6 +224,8 @@ const startSubscription = (methods) => {
       {/* Main Content */}
       <main className="flex-1 mt-20 mb-32 px-4">
         {/* Hero */}
+        {login ?
+       ( <>
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Hello Brand 👋</h2>
           <p className="text-gray-400 text-sm mb-4">
@@ -252,6 +258,42 @@ const startSubscription = (methods) => {
             </div>
           ))}
         </div>
+        </> 
+        )
+        :
+        (<>
+          <div className="max-w-4xl text-center">
+        
+        {/* Badge */}
+        <div className="inline-block px-4 py-1 mb-6 text-sm font-medium text-indigo-600 bg-indigo-100 rounded-full">
+          Intelligent Brand Management
+        </div>
+
+        {/* Headline */}
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+          Your Brand, <span className="text-indigo-600">Remembered.</span> Always.
+        </h1>
+
+        {/* Subtext */}
+        <p className="mt-6 text-lg md:text-xl text-gray-600">
+          Set up your brand once. Every search, summary, and idea builds on it —
+          intelligently, automatically. No repetition. Just smarter results.
+        </p>
+
+        {/* Buttons */}
+        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+          <button onClick ={()=>navigate('/signup')} className="px-6 py-3 text-white bg-indigo-600 rounded-xl font-medium hover:bg-indigo-700 transition">
+            Create Your Brand
+          </button>
+
+          <button onClick ={()=>navigate('/login')} className="px-6 py-3 border border-gray-300 rounded-xl font-medium text-white hover:bg-gray-100 transition">
+            Login
+          </button>
+        </div>
+
+    </div>
+        </>)
+        }
       </main>
 
       {/* Bottom Input */}
@@ -264,7 +306,8 @@ const startSubscription = (methods) => {
           disabled={!isSubscribed}
           className="flex-1 bg-black border border-gray-700 rounded-lg p-3 text-sm disabled:opacity-50 focus:outline-none focus:border-blue-500"
         />
-
+         {/*login in navigate */}
+        
         <button
           onClick={handleGenerate}
           disabled={!isSubscribed || loading}
@@ -274,7 +317,7 @@ const startSubscription = (methods) => {
         >
           {isSubscribed ? (loading ? "Generating..." : "Generate") : "Locked 🔒"}
         </button>
-      </footer>
+        </footer>
     </div>
   );
 }

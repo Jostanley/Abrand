@@ -1,11 +1,28 @@
 import React from "react";
-
-function subscription(){
+import {useEffect,useState} from 'react';
+import {supabase} from '../supabaseClient.js'
+function Subscription(){
   // Function to start trial and collect card
-  const startTrial = (method) =>{
-      let handler = PaystackPop.setup({
-        key: 'pk_live_10343c5462a915b51fac6020b280054f73231fa3', 
-        email: 'customer@email.com',
+  const [usermail,setUsermail] = useState("")
+  const [userid,setUserid] = useState(null)
+  
+  useEffect(
+  const userinfo = async ()=>{
+  const { data:{user},errors
+  } = await supabase.auth.getUser();
+   if (user){
+     alert(user.email)
+     setUsermail(data.user?.email)
+     setUserid(data.user?.id)
+   } else{
+     alert("user not exist")
+   }
+  },[])
+  const startTrial = async (method) =>{
+    try{
+      let handler = await PaystackPop.setup({
+        key:"pk_test_409f5b1a06d78f18537c5c76597da4efe1371e48",
+        email:"jostanley@gmail.com",
         amount: 1000 * 100, 
         currency: 'NGN', // or 'NGN', 'USD' depending on your setup
         channels: [method],
@@ -18,6 +35,10 @@ function subscription(){
       });
       handler.openIframe();
     }
+  }
+  catch (err){
+    alert (err.message)
+  }
   // Cancel subscription function
   const cancelSubscription = async () => {
     await fetch("https://abrandai.onrender.com/cancel-subscription", {
@@ -41,7 +62,7 @@ function subscription(){
       </button>
 
       <button
-        onClick={()=>cancelSubscription}
+        onClick={cancelSubscription}
         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
       >
         Cancel Subscription
