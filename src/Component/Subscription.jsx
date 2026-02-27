@@ -41,7 +41,7 @@ function Subscription() {
 
     setLoading(true);
     const handler = window.PaystackPop.setup({
-      key: "pk_test_409f5b1a06d78f18537c5c76597da4efe1371e48",
+      key: import.meta.env.VITE_PAYSTACK_URL,
       email: usermail,
       amount: 1000 * 100,
       currency: "NGN",
