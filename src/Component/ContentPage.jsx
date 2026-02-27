@@ -18,6 +18,7 @@ import { supabase } from "../supabaseClient";
       } = await supabase.auth.getUser();
 
       if (!user || error) {
+        alert("something wrong")
         navigate("/login");
         return;
       }

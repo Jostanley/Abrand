@@ -24,9 +24,10 @@ function Login() {
         password: formData.password,
       });
 
-      if (loginError) throw loginError;
-
-      
+      if (loginError) {
+        throw new loginError;
+       }
+       alert("login successfully")
       navigate('/createContent');
 
     } catch (err) {

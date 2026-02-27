@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { logOut } from "../Service/authService";
-
+import Loader from '../contexts/Loader.jsx'
 const API_URL = "https://abrandai.onrender.com"; // change if deployed
 
 function CreateContent() {
@@ -17,6 +17,7 @@ const [showInstall, setShowInstall] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loaders, setLoaders] = useState(false)
   const [error, setError] = useState("");
 const [login, setLogin] = useState(false)
   // Subscription states
@@ -49,7 +50,7 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      setLoading(true)
+  setLoaders(true)
       // 1️⃣ Get session
       const {
         data: { session },
@@ -86,7 +87,7 @@ const installApp = async () => {
       } 
        
       const newdata = await res.json();
-      
+          setLoaders(false)
           setLogin(true)
       setUserId(newdata.user?.id);
       setUserEmail(newdata.user?.email);
@@ -94,6 +95,8 @@ const installApp = async () => {
         
       
     } catch (err) {
+      setLoaders(false)
+      setLogin(false)
       alert(err.message)
       console.error(err.message);
     }
@@ -185,7 +188,7 @@ const startSubscription = (methods) => {
 )}
       {/* Profile Dropdown */}
       {toggle && (
-        <div className="fixed top-14 right-4 w-56 bg-[#1a1a1a] border border-gray-700 rounded-xl shadow-lg z-50">
+       <div className="fixed top-14 right-4 w-56 bg-[#1a1a1a] border border-gray-700 rounded-xl shadow-lg z-50">
           <div className="px-4 py-3 border-b border-gray-700">
             <p className="text-sm font-medium truncate">{userEmail}</p>
             <p className="text-xs text-gray-400">{plan}</p>
@@ -224,9 +227,14 @@ const startSubscription = (methods) => {
       {/* Main Content */}
       <main className="flex-1 mt-20 mb-32 px-4">
         {/* Hero */}
-        {login ?
+        
+          {login ?
+           
        ( <>
-        <div className="text-center mb-8">
+         {loaders ? < Loader/>:
+        <>
+          <Loader />
+          <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Hello Brand 👋</h2>
           <p className="text-gray-400 text-sm mb-4">
             An AI that helps creators generate on-brand content by remembering their brand, audience, and past posts.
@@ -258,6 +266,8 @@ const startSubscription = (methods) => {
             </div>
           ))}
         </div>
+        </>
+        }
         </> 
         )
         :
@@ -294,6 +304,7 @@ const startSubscription = (methods) => {
     </div>
         </>)
         }
+        
       </main>
 
       {/* Bottom Input */}
