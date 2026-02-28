@@ -84,7 +84,7 @@ const startSubscription = (methods) => {
     currency: "NGN",
     channels: [methods],
     callback:  function(event) {
-    alert(event.reference)  
+    alert(event.amount)  
     setIsSubscribed(true)
       
     },
@@ -95,26 +95,33 @@ const startSubscription = (methods) => {
 };
 
   const cancelSubscription = async () => {
-    if (!window.confirm("Are you sure you want to cancel your subscription?")) return;
-    setCanceling(true);
-    try {
+  if (!window.confirm("Are you sure you want to cancel your subscription?")) return;
+
+  setCanceling(true);
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+
     const res = await fetch("https://abrandai.onrender.com/cancel-subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userid }),
-      });
-      if(res.ok){
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (res.ok) {
       setIsSubscribed(false);
       alert("Subscription canceled.");
-      } else{
-        alert("unable to cancel")
-      }
-    } catch {
-      alert("Failed to cancel subscription.");
-    } finally {
-      setCanceling(false);
+    } else {
+      alert("Unable to cancel.");
     }
-  };
+  } catch {
+    alert("Failed to cancel subscription.");
+  } finally {
+    setCanceling(false);
+  }
+};
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
