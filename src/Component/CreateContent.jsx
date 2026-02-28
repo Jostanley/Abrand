@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { logOut } from "../Service/authService";
-import Loader from '../contexts/Loader.jsx'
 const API_URL = "https://abrandai.onrender.com"; // change if deployed
 
 function CreateContent() {
@@ -150,7 +149,7 @@ const installApp = async () => {
 
 const startSubscription = (methods) => {
   const handler = PaystackPop.setup({
-    key:import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
+    key:import.meta.env.VITE_PAYSTACK_KEY,
     email: userEmail,
     plan: import.meta.env.VITE_PLAN_CODE_KEY , // ✅ subscription plan code
     channels: [methods], // e.g. "card", "bank"
@@ -207,7 +206,7 @@ const startSubscription = (methods) => {
           >
             My Content
           </button>
-     { login ?
+     { !login ?
           <button
             onClick={async () => {
               await logOut();
@@ -231,9 +230,9 @@ const startSubscription = (methods) => {
           {login ?
            
        ( <>
-         {loaders ? < Loader/>:
-        <>
-          <Loader />
+         
+      
+      
           <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Hello Brand 👋</h2>
           <p className="text-gray-400 text-sm mb-4">
@@ -241,7 +240,7 @@ const startSubscription = (methods) => {
           </p>
            <h3 className ="mt-2 mb-2">3-Day Free Trial · Then $10/Month</h3>
           <button
-          onClick ={()=>startSubscription("card")}
+          onClick ={()=>navigate('/subscription')}
             className="bg-blue-600 px-6 py-2 rounded-xl text-sm font-medium hover:bg-blue-700"
           >
             Try for free
@@ -267,8 +266,6 @@ const startSubscription = (methods) => {
           ))}
         </div>
         </>
-        }
-        </> 
         )
         :
         (<>

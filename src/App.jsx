@@ -10,6 +10,7 @@ import UpdatePassword from './pages/ResetPassword.jsx'
 import BrandSetup from './Component/Brandsetup';
 import CreateContent from './Component/CreateContent.jsx'
 import ContentPage from './Component/ContentPage.jsx'
+import Subscription from './Component/Subscription.jsx'
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
             <Route path = '/createContent' element = {<CreateContent />}/>
             <Route path = "/contentpage" element ={<ContentPage />}/>
             <Route path="/verify-email" element={<VerifyEmail />} />
-    
+             <Route path ="/subscription" element ={<Subscription />}/>
         </Routes>
     </BrowserRouter>
   
