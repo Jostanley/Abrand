@@ -1,5 +1,7 @@
 import Footer from "./Footer.jsx"
+import {useNavigate } from 'react-router-dom'
 function Landingpage(){
+  const navigate = useNavigate();
   return(
     <div className="h-screen flex flex-col bg-[#0f0f0f] text-white">
       <header className="fixed top-0 w-full z-50 bg-[#0f0f0f] border-b border-gray-800 px-4 py-3 flex justify-between items-center">
