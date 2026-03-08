@@ -57,8 +57,10 @@ const handleSubmit = async (e) => {
       password: formData.password
     });
 
-    if (error) throw error;
-
+    if (error) {
+      throw error;
+    }
+    alert("signUp successfully")
   } catch (err) {
     setError(err.message);
   } finally {
