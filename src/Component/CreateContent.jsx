@@ -87,7 +87,7 @@ const installApp = async () => {
     }
   };
 
-sync4User()
+syncUser()
 }, []);
 
   const toggleText = () => setToggle((prev) => !prev);
