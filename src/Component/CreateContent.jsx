@@ -71,13 +71,14 @@ const installApp = async () => {
     if(error){
       throw error;
     }
-    if(!data) {
-    alert("no data")
-    }else {
+    if(data) {
+  
      setLoaders(false)
      setLogin(true)
       setUserEmail(data.email);
       setPlan(data.plan);
+    } else{
+      alert(data.email)
     } 
     } catch (err) {
       setLoaders(false)
