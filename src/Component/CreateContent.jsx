@@ -67,7 +67,7 @@ const installApp = async () => {
     .select("email, plan",)
     .eq("user_id", user.id)
     .maybeSingle()
-    if(mydata){
+    if(data){
      setLoaders(false)
      setLogin(true)
       setUserEmail(data.email);
