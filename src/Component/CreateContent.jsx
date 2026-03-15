@@ -68,8 +68,9 @@ const installApp = async () => {
     .select("*")
     .eq("user_id", user.id)
     .maybeSingle()
-    if(!data || error)
-    {
+    if(error){
+      throw error;
+    if(!data) {
     alert("no data")
     }else {
      setLoaders(false)
