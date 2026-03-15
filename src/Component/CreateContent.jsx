@@ -65,7 +65,7 @@ const installApp = async () => {
         return;
       }
     const {data,error} = await supabase.from("subscriptions")
-    .select("email, plan",)
+    .select("*")
     .eq("user_id", user.id)
     .maybeSingle()
     if(!data || error)
