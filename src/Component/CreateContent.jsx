@@ -66,7 +66,7 @@ const installApp = async () => {
       }
     const {data,error} = await supabase.from("subscriptions")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("user_id", user.user_id)
     .maybeSingle()
     if(error){
       throw error;
@@ -87,7 +87,7 @@ const installApp = async () => {
     }
   };
 
-syncUser()
+sync4User()
 }, []);
 
   const toggleText = () => setToggle((prev) => !prev);
