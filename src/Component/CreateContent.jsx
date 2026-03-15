@@ -49,50 +49,21 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-  setLoaders(true)
-      // 1️⃣ Get session
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        console.warn("No active session");
-        return;
+      const {data:{user}} = await supabase.auth.getUser();
+      if(!data){
+        alert("not a user")
       }
-
-      const user = session.user;
-
-      // 2️⃣ Payload
-      const payload = {
-        auth_id: user.id,
-        email: user.email,
-        
-      };
-
-      // 3️⃣ Send to backend
-      const res = await fetch(`${API_URL}/api/user/sync`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Sync failed");
-        alert("error")
-      } 
-       
-      const newdata = await res.json();
-          setLoaders(false)
-          setLogin(true)
-      setUserId(newdata.user?.id);
-      setUserEmail(newdata.user?.email);
-      setPlan(newdata.subscription?.plan);
-        
-      
+    const {data,error} = await supabase.from("subscriptions")
+    .select("email, plan",)
+    .eq("user_id", user.id)
+    .maybeSingle()
+    if(mydata){
+     setLoaders(false)
+     setLogin(true)
+      setUserEmail(data.email);
+      setPlan(data.plan);
+    }
+    alert("no data")
     } catch (err) {
       setLoaders(false)
       setLogin(false)
@@ -101,7 +72,7 @@ const installApp = async () => {
     }
   };
 
-  syncUser();
+syncUser()
 }, []);
 
   const toggleText = () => setToggle((prev) => !prev);
