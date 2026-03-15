@@ -79,6 +79,7 @@ const installApp = async () => {
       setPlan(data.plan);
     } else{
       alert(data.email)
+      alert("no email found")
     } 
     } catch (err) {
       setLoaders(false)
