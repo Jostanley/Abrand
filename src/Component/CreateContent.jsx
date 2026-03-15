@@ -70,6 +70,7 @@ const installApp = async () => {
     .maybeSingle()
     if(error){
       throw error;
+    }
     if(!data) {
     alert("no data")
     }else {
