@@ -62,18 +62,21 @@ const installApp = async () => {
 
       if(!user){
         alert("not a user")
+        return;
       }
     const {data,error} = await supabase.from("subscriptions")
     .select("email, plan",)
     .eq("user_id", user.id)
     .maybeSingle()
-    if(data){
+    if(!data || error)
+    {
+    alert("no data")
+    }else {
      setLoaders(false)
      setLogin(true)
       setUserEmail(data.email);
       setPlan(data.plan);
-    }
-    alert("no data")
+    } 
     } catch (err) {
       setLoaders(false)
       setLogin(false)
