@@ -64,21 +64,21 @@ const installApp = async () => {
         alert("not a user")
         return;
       }
-    const {data,error} = await supabase.from("subscriptions")
+    const {data:userdata, error} = await supabase.from("subscriptions")
     .select("*")
     .eq("user_id", user.id)
-    .maybeSingle()
+    .single()
     if(error){
       throw error;
     }
-    if(data) {
+    if(userdata) {
   
      setLoaders(false)
      setLogin(true)
-      setUserEmail(data.email);
-      setPlan(data.plan);
+      setUserEmail(userdata.email);
+      setPlan(userdata.plan);
     } else{
-      alert(data.email)
+      alert(userdata.email)
       alert("no email found")
     } 
     } catch (err) {
