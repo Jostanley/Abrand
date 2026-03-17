@@ -71,17 +71,17 @@ const installApp = async () => {
     if(error){
       throw error;
     }
-    if(userdata) {
-   
-   console.log(userdata)
-   alert(userdata.user?.email)
+    if(userdata || userdata.length > 0) {
+    const subinfo = userdata[0]
+   console.log(subinfo)
+   alert(subinfo.email)
     alert("isSubscribed")
      setLoaders(false)
      setLogin(true)
-      setUserEmail(userdata.user?.email);
-      setPlan(userdata.user?.plan);
+      setUserEmail(subinfo.email);
+      setPlan(subinfo.plan);
     } else{
-      alert(userdata.user?.email)
+      alert(subinfo.email)
       alert("no email found")
     } 
     } catch (err) {
