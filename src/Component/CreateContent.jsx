@@ -49,31 +49,24 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        console.warn("No active session");
-        return;
-      }
-
-      const user = session.user;
+      
+      const user = await supabase.auth.getUser();
 
       if(!user){
         alert("not a user")
         return;
       }
-    const {data:userdata, error} = await supabase.from("subscriptions")
-    .select("*")
+    const {data:subinfo, error} = await supabase.from("subscriptions")
+    .select("email, plan")
     .eq("user_id", user.id)
   
     if(error){
       throw error;
     }
-    if(userdata || userdata.length > 0) {
-    const subinfo = userdata[0]
+    if(subinfo) {
+    
    console.log(subinfo)
+   
    alert(subinfo.email)
     alert("isSubscribed")
      setLoaders(false)
