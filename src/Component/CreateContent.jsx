@@ -50,7 +50,7 @@ const installApp = async () => {
   const syncUser = async () => {
     try {
       
-      const user = await supabase.auth.getUser();
+      const {data:{user}, error} = await supabase.auth.getUser();
 
       if(!user){
         alert("not a user")
