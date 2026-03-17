@@ -49,7 +49,7 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data: { session }, err } = await supabase.auth.getSession();
 
 if (!session) {
   console.log("No active session");
