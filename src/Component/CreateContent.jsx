@@ -72,7 +72,7 @@ const installApp = async () => {
       throw error;
     }
     if(userdata) {
-    alert(userdata)
+    alert(JSON.stringify(userdata))
     alert("isSubscribed")
      setLoaders(false)
      setLogin(true)
