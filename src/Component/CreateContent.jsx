@@ -49,16 +49,15 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      
-      const {data:{user}, error} = await supabase.auth.getUser();
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-      if(!user){
-        alert("not a user")
-        return;
+if (!session) {
+  console.log("No active session");
+
       }
     const {data:subinfo, error} = await supabase.from("subscriptions")
     .select("email, plan")
-    .eq("user_id", user.id)
+    .eq("user_id", session.id)
   
     if(error){
       throw error;
