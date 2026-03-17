@@ -72,7 +72,8 @@ const installApp = async () => {
       throw error;
     }
     if(userdata) {
-  
+    alert(userdata)
+    alert("isSubscribed")
      setLoaders(false)
      setLogin(true)
       setUserEmail(userdata.email);
