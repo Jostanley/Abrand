@@ -73,6 +73,7 @@ const installApp = async () => {
     }
     if(userdata) {
    const newdata = JSON.stringify(userdata)
+   console.log(newdata)
    alert(newdata.email)
     alert("isSubscribed")
      setLoaders(false)
