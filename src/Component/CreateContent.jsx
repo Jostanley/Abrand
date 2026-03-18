@@ -56,7 +56,7 @@ const installApp = async () => {
         return;
       }
       alert(user.id)
-      const { data: subinfo, error: subError } = await supabase
+      const { data: {subinfo}, error } = await supabase
         .from("subscriptions")
         .select("*")
         .eq("user_id", user.id)
