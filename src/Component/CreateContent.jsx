@@ -55,15 +55,14 @@ const installApp = async () => {
         console.log("No active user");
         return;
       }
-
+      alert(user.id)
       const { data: subinfo, error: subError } = await supabase
         .from("subscriptions")
         .select("*")
         .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (subError) throw subError;
-
+      if(error){
+        throw error
+      }
       if (subinfo) {
         console.log(subinfo);
 
