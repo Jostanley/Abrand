@@ -65,7 +65,9 @@ const installApp = async () => {
       }
       if (subinfo) {
         console.log(subinfo);
-
+         alert(subinfo.id)
+         alert(subinfo.user_id)
+         alert(subinfo.plan)
         alert(subinfo.email);
         alert("isSubscribed");
 
