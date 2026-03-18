@@ -49,42 +49,44 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      const { data: { session }, error } = await supabase.auth.getUser();
-const user = session.user
-if (!user) {
-  console.log("No active session");
+      const { data: { user }, error } = await supabase.auth.getUser();
 
+      if (error || !user) {
+        console.log("No active user");
+        return;
       }
-    const {data:subinfo, error} = await supabase.from("subscriptions")
-    .select("email, plan")
-    .eq("user_id", user.id)
-  
-    if(error){
-      throw error;
-    }
-    if(subinfo) {
-    
-   console.log(subinfo)
-   
-   alert(subinfo.email)
-    alert("isSubscribed")
-     setLoaders(false)
-     setLogin(true)
-      setUserEmail(subinfo.email);
-      setPlan(subinfo.plan);
-    } else{
-      alert(subinfo.email)
-      alert("no email found")
-    } 
+
+      const { data: subinfo, error: subError } = await supabase
+        .from("subscriptions")
+        .select("email, plan")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (subError) throw subError;
+
+      if (subinfo) {
+        console.log(subinfo);
+
+        alert(subinfo.email);
+        alert("isSubscribed");
+
+        setLoaders(false);
+        setLogin(true);
+        setUserEmail(subinfo.email);
+        setPlan(subinfo.plan);
+      } else {
+        alert("no email found");
+      }
+
     } catch (err) {
-      setLoaders(false)
-      setLogin(false)
-      alert(err.message)
+      setLoaders(false);
+      setLogin(false);
+      alert(err.message);
       console.error(err.message);
     }
   };
 
-syncUser()
+  syncUser();
 }, []);
 
   const toggleText = () => setToggle((prev) => !prev);
