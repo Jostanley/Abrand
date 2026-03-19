@@ -228,7 +228,12 @@ const startSubscription = (methods) => {
         {error && (
           <p className="text-red-500 text-center mb-4 text-sm">{error}</p>
         )}
-
+        {/* menu body */}
+        <div <className ="flex justify-center align-center text-gray-400">
+          <h1 className = "align-center p-4">Abrand</h1>
+          <h3>let's build your brand </h3>
+          
+        </div>
         <div className="space-y-4">
           {outputs.map((text, index) => (
             <div key={index} className="bg-[#161616] border border-gray-700 rounded-xl p-4 relative">
