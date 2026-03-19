@@ -60,9 +60,10 @@ const installApp = async () => {
         .from("subscriptions")
         .select("*")
         .eq("user_id", user.id)
-      if(error){
-        throw error
-      }
+        .single();
+      if(error)
+        throw error;
+      
       if (subinfo) {
         console.log(subinfo);
          alert(subinfo.id)
