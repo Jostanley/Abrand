@@ -56,7 +56,6 @@ const installApp = async () => {
         console.log("No active user");
         return;
       }
-      alert(user.id)
       const { data: subinfo, error } = await supabase
         .from("subscriptions")
         .select("*")
@@ -66,23 +65,19 @@ const installApp = async () => {
         throw error;
       
       if (subinfo) {
-        console.log(subinfo);
-         alert(subinfo.id)
-         alert(subinfo.user_id)
-         alert(subinfo.plan)
-        alert(subinfo.email);
-        alert("isSubscribed");
+      
 
-        setLoaders(false);
+        setIsSubscribed(false);
         setLogin(true);
         setUserEmail(subinfo.email);
         setPlan(subinfo.plan);
       } else {
+        setIsSubscribed(false)
         alert("no email found");
       }
 
     } catch (err) {
-      setLoaders(false);
+      setIsSubscribed(false);
       setLogin(false);
       alert(err.message);
       console.error(err.message);
