@@ -67,7 +67,7 @@ const installApp = async () => {
       if (subinfo) {
       
 
-        setIsSubscribed(false);
+        setIsSubscribed(true);
         setLogin(true);
         setUserEmail(subinfo.email);
         setPlan(subinfo.plan);
