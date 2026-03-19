@@ -214,7 +214,7 @@ const startSubscription = (methods) => {
       {/* Main Content */}
       <main className="flex-1 mt-20 mb-32 px-4">
         {/* Hero */}
-        
+         { !isSubscribed &&
           <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2">Hello Brand 👋</h2>
           <p className="text-gray-400 text-sm mb-4">
@@ -228,7 +228,7 @@ const startSubscription = (methods) => {
             Try for free
           </button>
         </div>
-
+         }
         {/* Outputs */}
         {error && (
           <p className="text-red-500 text-center mb-4 text-sm">{error}</p>
