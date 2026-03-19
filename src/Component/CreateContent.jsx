@@ -49,9 +49,10 @@ const installApp = async () => {
   useEffect(() => {
   const syncUser = async () => {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const { data: { user }, err
+      } = await supabase.auth.getUser();
 
-      if (error || !user) {
+      if (err || !user) {
         console.log("No active user");
         return;
       }
