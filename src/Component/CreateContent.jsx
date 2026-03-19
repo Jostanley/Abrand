@@ -229,8 +229,8 @@ const startSubscription = (methods) => {
           <p className="text-red-500 text-center mb-4 text-sm">{error}</p>
         )}
         {/* menu body */}
-        <div className ="flex justify-center align-center text-gray-400">
-          <h1 className = "align-center p-4">Abrand</h1>
+        <div className ="flex justify-center align-center text-gray-100 p-4">
+          <h1 className = "align-center text-2xl">Abrand</h1>
           <h3>let's build your brand </h3>
           
         </div>
