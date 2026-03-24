@@ -34,18 +34,7 @@ function Pricing() {
           </button>
         </div>
 
-        <div className="bg-gray-900 p-6 rounded-xl text-center border border-gray-700">
-          <h3 className="text-xl font-semibold">Enterprise</h3>
-          <p className="mt-2 text-gray-400">Custom</p>
-          <ul className="mt-4 space-y-2 text-sm text-gray-400">
-            <li>Custom workflows</li>
-            <li>API access</li>
-            <li>Support</li>
-          </ul>
-          <button className="mt-6 px-6 py-3 bg-indigo-600 rounded-xl">
-            Contact Sales
-          </button>
-        </div>
+       
 
       </div>
     </div>

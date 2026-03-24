@@ -34,11 +34,14 @@ function Landingpage(){
 
         {/* Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-          <button onClick ={()=>navigate('/signup')} className="px-6 py-3 text-white bg-indigo-600 rounded-xl font-medium hover:bg-indigo-700 transition">
-            Create Your Brand
+          <button onClick ={()=>navigate('/signup')} className="
+         mt-6 px-6 py-3 bg-indigo-600 rounded-xl hover:bg-indigo-700 transition font-medium ">
+            Get Started
           </button>
 
-          <button onClick ={()=>navigate('/login')} className="px-6 py-3 border border-gray-300 rounded-xl font-medium text-white hover:bg-gray-100 transition">
+          <button onClick ={()=>navigate('/login')} className=" mt-6 px-6 py-3 border border-gray-300 rounded-xl font-medium text-white hover:bg-gray-100 transition
+          
+          ">
             Login
           </button>
         </div>
