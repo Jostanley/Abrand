@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router.dom"
+import {useNavigate} from "react-router-dom"
 function Pricing() {
   const navigate = useNavigate()
   return (
