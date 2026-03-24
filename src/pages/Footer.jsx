@@ -21,8 +21,6 @@ function Footer() {
           <ul className="space-y-2 text-sm">
             <li>Features</li>
             <li>Pricing</li>
-            <li>API</li>
-            <li>Docs</li>
           </ul>
         </div>
 
