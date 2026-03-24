@@ -1,6 +1,6 @@
 function Pricing() {
   return (
-    <div className="py-16">
+    <div className="bg-[#111] py-16">
       <h2 className="text-3xl font-bold text-center">Pricing</h2>
       <p className="text-gray-400 text-center mt-2">
         Simple plans for teams of all sizes.

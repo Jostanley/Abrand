@@ -1,6 +1,6 @@
 function Hero() {
   return (
-    <div className="text-center py-20 px-6">
+    <div className="bg-[#111] text-center py-20 px-6">
       <h1 className="text-4xl md:text-6xl font-bold">
         Smarter Brand Memory for AI
       </h1>

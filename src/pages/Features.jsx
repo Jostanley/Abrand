@@ -1,6 +1,6 @@
 function Features() {
   return (
-    <div className="py-16">
+    <div className="bg-[#111] py-16">
       <h2 className="text-3xl font-bold text-center">Features</h2>
 
       <div className="grid md:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto px-6 text-center">
