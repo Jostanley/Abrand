@@ -1,4 +1,7 @@
 import Footer from "./Footer.jsx"
+import Hero from "./Hero.jsx"
+import Features from "./Features.jsx"
+import Pricing from "./Pricing.jsx"
 import {useNavigate } from 'react-router-dom'
 function Landingpage(){
   const navigate = useNavigate();
@@ -41,7 +44,10 @@ function Landingpage(){
         </div>
 
     </div>
-    <Footer />
+    <Hero />
+      <Features />
+      <Pricing />
+      <Footer />
       </div>
     )
 }
