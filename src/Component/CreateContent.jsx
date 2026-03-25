@@ -93,35 +93,44 @@ const installApp = async () => {
      CALL AI BACKEND
   =============================== */
   const handleGenerate = async () => {
-    if (!isSubscribed) {
-      navigate("/subscribe");
-      return;
+    
+  if (!isSubscribed) {
+    navigate("/subscribe");
+    return;
+  }
+
+  if (!idea.trim() ) return;
+alert("idea good")
+  setLoading(true);
+  setError("");
+  setOutputs([]);
+
+  try {
+    const res = await fetch(`${API_URL}/ai/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId, message: idea }),
+    });
+
+    const data = await res.json();
+
+    if (!data) {
+       alert("error")
+      throw new Error(data.error || "Failed to generate content");
+    
+    alert(err.message)
+    } else{
+    alert("backen response")
+    setOutputs([data.reply]);
     }
-
-    if (!idea.trim() || !userId) return;
-
-    setLoading(true);
-    setError("");
-    setOutputs([]);
-
-    try {
-      const res = await fetch(`${API_URL}/ai/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, message: idea }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Failed to generate content");
-
-      setOutputs([data.reply]);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    alert(err.message)
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
