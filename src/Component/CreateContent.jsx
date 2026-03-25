@@ -105,7 +105,14 @@ alert("idea good")
   setError("");
   return
 } else{
-   
+   const { data, error } = await supabase.auth.getSession();
+
+if (error || !data.session) {
+  throw new Error("User not authenticated");
+}
+
+const session = data.session;
+
     const res = await fetch(`${API_URL}/ai/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json",
