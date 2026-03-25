@@ -99,12 +99,13 @@ const installApp = async () => {
     return;
   }
 
-  if (!idea.trim() ) return;
+  if (!idea.trim() ) {
+    return;
 alert("idea good")
   setLoading(true);
   setError("");
-  setOutputs([]);
-
+}
+setIdea("")
   try {
     const res = await fetch(`${API_URL}/ai/chat`, {
       method: "POST",
@@ -122,7 +123,7 @@ alert("idea good")
     alert(err.message)
     } else{
     alert("backen response")
-    setOutputs([data.reply]);
+    setOutputs(data.reply);
     }
   } catch (err) {
     alert(err.message)
