@@ -121,7 +121,7 @@ const session = data.session;
       body: JSON.stringify({message: idea }),
     });
 
-    const data = await res.json();
+    const newdata = await res.json();
 
     if (!res.ok) {
        alert("error")
