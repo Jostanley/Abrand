@@ -123,7 +123,7 @@ alert("idea good")
     alert(err.message)
     } else{
     alert("backen response")
-    setOutputs((prev)=>{[data.reply, ...prev]);
+    setOutputs((prev)=>{[data.reply, ...prev]});
     }
    }
   } catch (err) {
