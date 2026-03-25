@@ -100,29 +100,30 @@ const installApp = async () => {
   }
 
   if (!idea.trim() ) {
-    return;
 alert("idea good")
   setLoading(true);
   setError("");
+  return
 } else{
    
     const res = await fetch(`${API_URL}/ai/chat`, {
       method: "POST",
-      headers: { "Content-Type": "application/json"
+      headers: { "Content-Type": "application/json",
+      Authorization:`Bearer ${session.access_token}`
       },
-      body: JSON.stringify({ userId, message: idea }),
+      body: JSON.stringify({message: idea }),
     });
 
     const data = await res.json();
 
-    if (!data) {
+    if (!res.ok) {
        alert("error")
       throw new Error(data.error || "Failed to generate content");
     
     alert(err.message)
     } else{
     alert("backen response")
-    setOutputs(data.reply);
+    setOutputs((prev)=>{[data.reply, ...prev]);
     }
    }
   } catch (err) {
