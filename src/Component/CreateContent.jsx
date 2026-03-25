@@ -93,7 +93,7 @@ const installApp = async () => {
      CALL AI BACKEND
   =============================== */
   const handleGenerate = async () => {
-    
+    try{
   if (!isSubscribed) {
     navigate("/subscribe");
     return;
@@ -104,9 +104,8 @@ const installApp = async () => {
 alert("idea good")
   setLoading(true);
   setError("");
-}
-setIdea("")
-  try {
+} else{
+   
     const res = await fetch(`${API_URL}/ai/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json"
@@ -125,6 +124,7 @@ setIdea("")
     alert("backen response")
     setOutputs(data.reply);
     }
+   }
   } catch (err) {
     alert(err.message)
     setError(err.message);
