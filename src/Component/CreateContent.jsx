@@ -247,8 +247,8 @@ const startSubscription = (methods) => {
           <p className="text-red-500 text-center mb-4 text-sm">{error}</p>
         )}
         {/* menu body */}
-        <div className ="grid place-items-center min-h-screen text-gray-100 p-4">
-          <div>
+        <div className ="grid place-items-center min-h-full text-gray-100 p-4">
+          <div className="my-6">
           <h1 className = "align-center text-2xl">Abrand Ai</h1>
           <h3 className = "align-center ">let's build your brand </h3>
           </div>
