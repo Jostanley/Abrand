@@ -8,8 +8,8 @@ function Landingpage(){
   return(
     <div className="h-screen flex flex-col bg-[#0f0f0f] text-white">
       <header className="fixed top-0 w-full z-50 bg-[#0f0f0f] border-b border-gray-800 px-4 py-3 flex justify-between items-center">
-        <h1 className="font-semibold text-lg">Brand AI</h1>
-        <button  className="text-sm text-gray-400 hover:text-white">
+        <h1 className = "font-semibold tex-lg">Abrand Ai</h1>
+        <button  className="text-lg font-semibold text-gray-400 hover:text-white">
           Profile
         </button>
       </header>
@@ -44,6 +44,7 @@ function Landingpage(){
           ">
             Login
           </button>
+          
         </div>
 
     </div>

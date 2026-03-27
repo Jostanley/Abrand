@@ -21,11 +21,25 @@ const Signup = () => {
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const { name, value } = e.target;
+
+  let safeValue = value;
+
+  if (name === "first_name") {
+    safeValue = value.replace(/[^a-zA-Z\s'-]/g, "");
+  } else if (name === "email") {
+    safeValue = value.trim();
+  } else if (name === "password") {
+    safeValue = value;
+  } else if (name === "confirmPassword") {
+    safeValue = value;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: safeValue,
+  }));
+};
 
   const togglePassword = (field) => {
     setToggle((prev) => ({
@@ -98,6 +112,7 @@ const handleSubmit = async (e) => {
             name="email"
             type="email"
             placeholder="Email address"
+            autoComplete = "email"
             value={formData.email}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg border text-white bg-transparent"
@@ -110,6 +125,7 @@ const handleSubmit = async (e) => {
               type={toggle.password ? "text" : "password"}
               placeholder="Password"
               value={formData.password}
+              autoComplete = "current-password"
               onChange={handleChange}
               className="flex-1 px-2 py-3 bg-transparent text-white outline-none"
               required
@@ -128,6 +144,7 @@ const handleSubmit = async (e) => {
               name="confirmPassword"
               type={toggle.confirmPassword ? "text" : "password"}
               placeholder="Confirm password"
+              autoComplete = "current-password"
               value={formData.confirmPassword}
               onChange={handleChange}
               className="flex-1 px-2 py-3 bg-transparent text-white outline-none"

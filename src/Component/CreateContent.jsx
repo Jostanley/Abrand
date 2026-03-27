@@ -274,7 +274,9 @@ const startSubscription = (methods) => {
       <footer className="fixed bottom-0 w-full bg-[#1a1a1a] border-t border-gray-800 p-3 flex gap-2 items-center">
         <textarea
           value={idea}
-          onChange={(e) => setIdea(e.target.value)}
+          onChange={(e) => {
+          let safevalue = e.target.value.replace(/[^a-zA-Z\s'-]/g, "")
+          setIdea(safevalue)}}
           placeholder={isSubscribed ? "Describe the content you want..." : "Subscribe to unlock AI generation"}
           rows={2}
           disabled={!isSubscribed}

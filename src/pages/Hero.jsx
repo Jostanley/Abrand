@@ -6,6 +6,7 @@ function Hero() {
       <p className="mt-4 text-gray-400 max-w-xl mx-auto">
         Save your brand voice, generate ideas, and stay consistent across all content.
       </p>
+      <img src="/Abrandbg.png"/>
     </div>
   );
 }
