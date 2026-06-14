@@ -66,7 +66,7 @@ const installApp = async () => {
       
       if (subinfo) {
       
-
+         setUserId(user.id);
         setIsSubscribed(true);
         setLogin(true);
         setUserEmail(subinfo.email);
@@ -130,7 +130,7 @@ const session = data.session;
     alert(err.message)
     } else{
     alert("backen response")
-    setOutputs((prev)=>{[data.reply, ...prev]});
+    setOutputs((prev)=>{[newdata.reply, ...prev]});
     }
    }
   } catch (err) {
@@ -207,19 +207,24 @@ const startSubscription = (methods) => {
           >
             My Content
           </button>
-     { !login ?
-          <button
-            onClick={async () => {
-              await logOut();
-              navigate("/login");
-            }}
-            className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
-          >
-            Logout
-          </button>:
-          <button onClick = {()=>navigate('/login')}
-          className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]">login</button>
-     }
+          
+          {login ? (
+  <button
+    onClick={async () => {
+      await logOut();
+      navigate("/login");
+    }}
+    className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
+  >
+    Logout
+  </button>
+) : (
+  <button
+    onClick={() => navigate("/login")}
+    className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
+  >
+    Login
+  </button>
           <button onClick ={toggleText}className ="absolute right-1">close</button>
         </div>
       )}
