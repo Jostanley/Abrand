@@ -130,7 +130,7 @@ const session = data.session;
     alert(err.message)
     } else{
     alert("backen response")
-    setOutputs((prev)=>{[newdata.reply, ...prev]});
+    setOutputs((prev) => [newdata.reply, ...prev]);
     }
    }
   } catch (err) {
@@ -187,48 +187,58 @@ const startSubscription = (methods) => {
   </button>
 )}
       {/* Profile Dropdown */}
-      {toggle && (
-       <div className="fixed top-14 right-4 w-56 bg-[#1a1a1a] border border-gray-700 rounded-xl shadow-lg z-50">
-          <div className="px-4 py-3 border-b border-gray-700">
-            <p className="text-sm font-medium truncate">{userEmail}</p>
-            <p className="text-xs text-gray-400">{plan}</p>
-          </div>
+     {toggle && (
+  <div className="fixed top-14 right-4 w-56 bg-[#1a1a1a] border border-gray-700 rounded-xl shadow-lg z-50">
 
-          <button
-            onClick={() => navigate("/brand-setup")}
-            className="w-full px-4 py-2 text-sm text-left hover:bg-[#2a2a2a]"
-          >
-            Brand Profile
-          </button>
+    <div className="px-4 py-3 border-b border-gray-700">
+      <p className="text-sm font-medium truncate">{userEmail}</p>
+      <p className="text-xs text-gray-400">{plan}</p>
+    </div>
 
-          <button
-            onClick={() => navigate("/contentpage")}
-            className="w-full px-4 py-2 text-sm text-left hover:bg-[#2a2a2a]"
-          >
-            My Content
-          </button>
-          
-          {login ? (
-  <button
-    onClick={async () => {
-      await logOut();
-      navigate("/login");
-    }}
-    className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
-  >
-    Logout
-  </button>
-) : (
-  <button
-    onClick={() => navigate("/login")}
-    className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
-  >
-    Login
-  </button>
-          <button onClick ={toggleText}className ="absolute right-1">close</button>
-        </div>
-      )}
+    <button
+      onClick={() => navigate("/brand-setup")}
+      className="w-full px-4 py-2 text-sm text-left hover:bg-[#2a2a2a]"
+    >
+      Brand Profile
+    </button>
 
+    <button
+      onClick={() => navigate("/contentpage")}
+      className="w-full px-4 py-2 text-sm text-left hover:bg-[#2a2a2a]"
+    >
+      My Content
+    </button>
+
+    {login ? (
+      <button
+        onClick={async () => {
+          await logOut();
+          navigate("/login");
+        }}
+        className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
+      >
+        Logout
+      </button>
+    ) : (
+      <>
+        <button
+          onClick={() => navigate("/login")}
+          className="w-full px-4 py-2 text-sm text-left text-red-400 hover:bg-[#2a2a2a]"
+        >
+          Login
+        </button>
+
+        <button
+          onClick={toggleText}
+          className="w-full px-4 py-2 text-sm text-left hover:bg-[#2a2a2a]"
+        >
+          Close
+        </button>
+      </>
+    )}
+
+  </div>
+)} 
       {/* Main Content */}
       <main className="flex-1 mt-20 mb-32 px-4">
         {/* Hero */}
