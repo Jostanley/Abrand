@@ -130,6 +130,8 @@ const session = data.session;
     alert(err.message)
     } else{
     alert("backen response")
+    console.log(newdata);
+    alert(JSON.stringify(newdata, 2,null))
     setOutputs((prev) => [newdata.reply, ...prev]);
     }
    }
