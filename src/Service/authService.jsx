@@ -3,42 +3,35 @@ import { supabase } from '../supabaseClient';
 /**
  * SIGN UP
  */
-export const signUp = async (email, password) => {
+export const signUp = async (email, password, firstName) => {
   try {
-    // Create auth user
     const { data, error } = await supabase.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        data: { first_name: firstName },
+      },
     });
 
     if (error) throw error;
 
     const user = data.user;
 
-    // Create user row in "users" table
+    // Create user row in "users" table (best-effort)
     await supabase.from('users').insert([
       {
         user_id: user.id,
         email: user.email,
         plan: 'free',
         total_content_generated: 0,
-        total_tokens_used: 0
-      }
+        total_tokens_used: 0,
+      },
     ]);
 
-    return {
-      success: true,
-      user: {
-        uid: user.id,
-        email: user.email
-      }
-    };
+    return { success: true, user: { uid: user.id, email: user.email } };
   } catch (error) {
     console.error('Signup error:', error);
-    return {
-      success: false,
-      error: getErrorMessage(error.message)
-    };
+    return { success: false, error: getErrorMessage(error.message) };
   }
 };
 
@@ -47,28 +40,12 @@ export const signUp = async (email, password) => {
  */
 export const logIn = async (email, password) => {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-
-    const user = data.user;
-
-    return {
-      success: true,
-      user: {
-        uid: user.id,
-        email: user.email
-      }
-    };
+    return { success: true, user: { uid: data.user.id, email: data.user.email } };
   } catch (error) {
     console.error('Login error:', error.message);
-    return {
-      success: false,
-      error: getErrorMessage(error.message)
-    };
+    return { success: false, error: getErrorMessage(error.message) };
   }
 };
 
@@ -81,10 +58,7 @@ export const logOut = async () => {
     return { success: true };
   } catch (error) {
     console.error('Logout error:', error);
-    return {
-      success: false,
-      error: 'Failed to sign out'
-    };
+    return { success: false, error: 'Failed to sign out' };
   }
 };
 
@@ -95,24 +69,21 @@ export const resetPassword = async (email) => {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     if (error) throw error;
-
     return { success: true };
   } catch (error) {
     console.error('Password reset error:', error);
-    return {
-      success: false,
-      error: getErrorMessage(error.message)
-    };
+    return { success: false, error: getErrorMessage(error.message) };
   }
 };
 
 /**
- * AUTH STATE CHANGE
+ * AUTH STATE CHANGE — returns unsubscribe function
  */
 export const onAuthChange = (callback) => {
-  return supabase.auth.onAuthStateChange((_event, session) => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
     callback(session?.user || null);
   });
+  return () => subscription.unsubscribe();
 };
 
 /**
@@ -128,43 +99,9 @@ export const getCurrentUser = async () => {
  */
 export const getErrorMessage = (message) => {
   if (!message) return 'An error occurred. Please try again';
-
-  if (message.includes('User already registered'))
-    return 'This email is already registered';
-
-  if (message.includes('Invalid login credentials'))
-    return 'Incorrect email or password';
-
-  if (message.includes('Password should be at least'))
-    return 'Password should be at least 6 characters';
-
-  if (message.includes('network'))
-    return 'Network error. Check your connection';
-
+  if (message.includes('User already registered')) return 'This email is already registered';
+  if (message.includes('Invalid login credentials')) return 'Incorrect email or password';
+  if (message.includes('Password should be at least')) return 'Password should be at least 6 characters';
+  if (message.includes('network')) return 'Network error. Check your connection';
   return message;
 };
-
-export const checkAuth = async () => {
-    const {
-      data: { user },
-      error, } = await supabase.auth.getUser();
-
-    if (error) {
-      console.error("Auth check error:", error.message);
-    }else{
-
-  };
-
-  checkAuth();
-
-  // Listen for login/logout AFTER page load
-  const { data: authListener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-      setUser(session?.user ?? null);
-    }
-  );
-
-  return () => {
-    authListener.subscription.unsubscribe();
-}
-}

@@ -1,291 +1,319 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
+const TONE_OPTIONS = [
+  { value: 'casual', label: 'Casual' },
+  { value: 'professional', label: 'Professional' },
+  { value: 'friendly', label: 'Friendly' },
+  { value: 'authoritative', label: 'Authoritative' },
+  { value: 'playful', label: 'Playful' },
+  { value: 'inspiring', label: 'Inspiring' },
+];
+
 const BrandSetup = () => {
-const [formData, setFormData] = useState({
-niche: '',
-tone: 'casual',
-beliefs: ['', '', ''],
-bannedWords: '',
-});
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    niche: '',
+    tone: 'casual',
+    beliefs: ['', '', ''],
+    bannedWords: '',
+  });
 
-const [loading, setLoading] = useState(true);
-const [saving, setSaving] = useState(false);
-const [error, setError] = useState('');
-const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-useEffect(() => {
-loadBrandProfile();
-}, []);
+  useEffect(() => {
+    loadBrandProfile();
+  }, []);
 
-/**
+  const loadBrandProfile = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-Load existing brand profile from Supabase
-*/
+      const { data, error } = await supabase
+        .from('brandProfiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-const loadBrandProfile = async () => {
-  setLoading(true);
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
+      if (error) throw error;
 
-    if (!user) {
-      setError('You must be logged in to access this page');
-      return;
+      if (data) {
+        setFormData({
+          niche: data.niche || '',
+          tone: data.tone || 'casual',
+          beliefs: data.core_beliefs?.length ? data.core_beliefs : ['', '', ''],
+          bannedWords: Array.isArray(data.banned_words)
+            ? data.banned_words.join(', ')
+            : data.banned_words || '',
+        });
+      }
+    } catch (err) {
+      console.error('Error loading brand profile:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const { data, error } = await supabase
-      .from('brandProfiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-    if (error) throw error;
+  const handleBeliefChange = (index, value) => {
+    const newBeliefs = [...formData.beliefs];
+    newBeliefs[index] = value;
+    setFormData(prev => ({ ...prev, beliefs: newBeliefs }));
+  };
 
-    if (!data) {
-      alert("No brand profile found");
-    } else {
-      setFormData({
-        niche: data.niche || '',
-        tone: data.tone || 'casual',
-        beliefs: data.core_beliefs || ['', '', ''],
-        bannedWords: data.banned_words || '',
-      });
-
-      // ✅ Correct place to alert
-    
+  const addBeliefField = () => {
+    if (formData.beliefs.length < 10) {
+      setFormData(prev => ({ ...prev, beliefs: [...prev.beliefs, ''] }));
     }
+  };
 
-  } catch (err) {
-    console.error('Error loading brand profile:', err);
-    setError(err.message);
-  } finally {
-    setLoading(false);
+  const removeBeliefField = (index) => {
+    if (formData.beliefs.length > 1) {
+      setFormData(prev => ({ ...prev, beliefs: prev.beliefs.filter((_, i) => i !== index) }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setSaving(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('You must be logged in to save');
+
+      if (!formData.niche.trim()) throw new Error('Niche is required');
+
+      const filteredBeliefs = formData.beliefs.map(b => b.trim()).filter(b => b !== '');
+      if (filteredBeliefs.length === 0) throw new Error('At least one core belief is required');
+
+      const bannedWordsArray = formData.bannedWords
+        .split(',')
+        .map(w => w.trim().toLowerCase())
+        .filter(w => w !== '');
+
+      const { error } = await supabase
+        .from('brandProfiles')
+        .upsert({
+          user_id: user.id,
+          niche: formData.niche.trim(),
+          tone: formData.tone,
+          core_beliefs: filteredBeliefs,
+          banned_words: bannedWordsArray,
+          updated_at: new Date().toISOString(),
+          version: 1,
+        }, { onConflict: ['user_id'] });
+
+      if (error) throw error;
+
+      setSuccess('Brand profile saved!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Failed to save brand profile. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#09090b] flex items-center justify-center">
+        <div className="text-center">
+          <svg className="animate-spin w-8 h-8 text-indigo-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+          <p className="text-zinc-400 text-sm">Loading your brand profile...</p>
+        </div>
+      </div>
+    );
   }
-};
 
+  return (
+    <div className="min-h-screen bg-[#09090b] py-8 px-4">
+      {/* Header */}
+      <div className="max-w-2xl mx-auto mb-8 flex items-center justify-between">
+        <button
+          onClick={() => navigate('/createContent')}
+          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+        >
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          Back
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-indigo-500 rounded-md flex items-center justify-center">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2L14 5.5V10.5L8 14L2 10.5V5.5L8 2Z" fill="white"/>
+            </svg>
+          </div>
+          <span className="font-semibold text-sm">Abrand AI</span>
+        </div>
+      </div>
 
-const handleInputChange = (e) => {
-const { name, value } = e.target;
-setFormData(prev => ({ ...prev, [name]: value }));
-};
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Brand Setup</h1>
+          <p className="mt-2 text-zinc-400 text-sm">
+            Define your brand identity so AI can generate perfectly consistent content.
+          </p>
+        </div>
 
-const handleBeliefChange = (index, value) => {
-const newBeliefs = [...formData.beliefs];
-newBeliefs[index] = value;
-setFormData(prev => ({ ...prev, beliefs: newBeliefs }));
-};
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
+        )}
 
-const addBeliefField = () => {
-if (formData.beliefs.length < 10) {
-setFormData(prev => ({ ...prev, beliefs: [...prev.beliefs, ''] }));
-}
-};
+        {success && (
+          <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3">
+            <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+            <p className="text-sm text-green-400">{success}</p>
+          </div>
+        )}
 
-const removeBeliefField = (index) => {
-if (formData.beliefs.length > 1) {
-const newBeliefs = formData.beliefs.filter((_, i) => i !== index);
-setFormData(prev => ({ ...prev, beliefs: newBeliefs }));
-}
-};
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Niche */}
+          <div className="card">
+            <label htmlFor="niche" className="block text-sm font-medium mb-1">
+              Niche <span className="text-red-400">*</span>
+            </label>
+            <p className="text-xs text-zinc-500 mb-3">Who you serve and what you offer in one sentence</p>
+            <input
+              type="text"
+              id="niche"
+              name="niche"
+              value={formData.niche}
+              onChange={handleInputChange}
+              placeholder="e.g., sustainable drinkware for outdoor enthusiasts"
+              className="input-field"
+            />
+          </div>
 
-const handleSubmit = async (e) => {
-e.preventDefault();
-setError('');
-setSuccess('');
-setSaving(true);
+          {/* Tone */}
+          <div className="card">
+            <label htmlFor="tone" className="block text-sm font-medium mb-1">
+              Brand Tone <span className="text-red-400">*</span>
+            </label>
+            <p className="text-xs text-zinc-500 mb-3">The voice and personality of your brand</p>
+            <div className="grid grid-cols-3 gap-2">
+              {TONE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, tone: option.value }))}
+                  className={`py-2.5 px-3 rounded-lg text-sm font-medium border transition-all duration-150 ${
+                    formData.tone === option.value
+                      ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-300'
+                      : 'bg-transparent border-[#27272a] text-zinc-400 hover:border-zinc-600 hover:text-zinc-300'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-try {  
-  const { data: { user } } = await supabase.auth.getUser();  
-  if (!user) throw new Error('You must be logged in to save');  
+          {/* Core Beliefs */}
+          <div className="card">
+            <label className="block text-sm font-medium mb-1">
+              Core Beliefs <span className="text-red-400">*</span>
+            </label>
+            <p className="text-xs text-zinc-500 mb-4">What does your brand stand for? Add 2–5 beliefs.</p>
+            <div className="space-y-3">
+              {formData.beliefs.map((belief, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={belief}
+                    onChange={(e) => handleBeliefChange(index, e.target.value)}
+                    placeholder={`Belief ${index + 1}`}
+                    className="input-field flex-1"
+                  />
+                  {formData.beliefs.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeBeliefField(index)}
+                      className="w-10 h-10 mt-0.5 flex items-center justify-center bg-[#09090b] border border-[#27272a] rounded-lg text-zinc-500 hover:text-red-400 hover:border-red-500/30 transition-all"
+                    >
+                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            {formData.beliefs.length < 10 && (
+              <button
+                type="button"
+                onClick={addBeliefField}
+                className="mt-3 flex items-center gap-1.5 text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+              >
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add another belief
+              </button>
+            )}
+          </div>
 
-  if (!formData.niche.trim()) throw new Error('Niche is required');  
+          {/* Banned Words */}
+          <div className="card">
+            <label htmlFor="bannedWords" className="block text-sm font-medium mb-1">
+              Banned Words{" "}
+              <span className="text-zinc-500 text-xs font-normal">(optional)</span>
+            </label>
+            <p className="text-xs text-zinc-500 mb-3">Comma-separated words to avoid in generated content</p>
+            <input
+              type="text"
+              id="bannedWords"
+              name="bannedWords"
+              value={formData.bannedWords}
+              onChange={handleInputChange}
+              placeholder="e.g., cheap, revolutionary, game-changer"
+              className="input-field"
+            />
+          </div>
 
-  const filteredBeliefs = formData.beliefs.map(b => b.trim()).filter(b => b !== '');  
-  if (filteredBeliefs.length === 0) throw new Error('At least one core belief is required');  
-
-  const bannedWordsArray = formData.bannedWords  
-    .split(',')  
-    .map(word => word.trim().toLowerCase())  
-    .filter(word => word !== '');  
-
-  const brandProfile = {  
-    user_id: user.id,  
-    niche: formData.niche.trim(),  
-    tone: formData.tone ,  
-    core_beliefs: filteredBeliefs,  
-    banned_words: bannedWordsArray,  
-    updated_at: new Date().toISOString(),  
-    version: 1  
-  };  
-
-  // Save to Supabase (upsert for create/update)  
-  const { error } = await supabase  
-    .from('brandProfiles')  
-    .upsert(brandProfile, { onConflict: ['user_id'] });  
-
-  if (error) throw error;  
-
-  setSuccess('Brand profile saved successfully! ✓');  
-  setTimeout(() => setSuccess(''), 3000);  
-
-  // Optionally update localStorage for instant UI  
-
-} catch (err) {  
-  console.error('Error saving brand profile:', err);  
-  setError(err.message || 'Failed to save brand profile. Please try again.');  
-} finally {  
-  setSaving(false);  
-}
-
-};
-
-if (loading) {
-return (
-<div className="min-h-screen bg-[#0f0f0f]  flex items-center justify-center">
-<div className="text-center">
-<div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-<p className="text-white text-lg">Loading your brand profile...</p>
-</div>
-</div>
-);
-}
-
-return (
-<div className="min-h-screen bg-[#0f0f0f]  py-8 px-4 sm:px-6 lg:px-8">
-<div className="max-w-2xl mx-auto">
-<div className="bg-[#0f0f0f]  rounded-lg shadow-md p-8">
-
-<div className="mb-8">  
-        <h1 className="text-3xl font-bold text-white mb-2">Brand Setup</h1>  
-        <p className="text-white">Define your brand identity so AI can generate consistent content</p>  
-      </div>  
-
-      {error && (  
-        <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">  
-          <p className="text-sm text-red-700">{error}</p>  
-        </div>  
-      )}  
-
-      {success && (  
-        <div className="mb-6 bg-[#0f0f0f]  border-l-4 border-green-500 p-4 rounded">  
-          <p className="text-sm text-green-700">{success}</p>  
-        </div>  
-      )}  
-
-      <form onSubmit={handleSubmit} className="space-y-6">  
-
-        <div>  
-          <label htmlFor="niche" className="block text-sm font-medium text-white mb-2">  
-            Niche <span className="text-red-500">*</span>  
-          </label>  
-          <input  
-            type="text"  
-            id="niche"  
-            name="niche"  
-            value={formData.niche}  
-            onChange={handleInputChange}  
-            placeholder="e.g., sustainable drinkware for outdoor enthusiasts"  
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white text-white outline-none transition"  
-          />  
-          <p className="mt-2 text-sm text-white">Who you serve and what you offer in one sentence</p>  
-        </div>  
-
-        <div>  
-          <label htmlFor="tone" className="block text-sm font-medium text-white mb-2">  
-            Brand Tone <span className="text-red-500">*</span>  
-          </label>  
-          <select  
-            id="tone"  
-            name="tone"  
-            value={formData.tone}  
-            onChange={handleInputChange}  
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white text-white outline-none transition bg-[#0f0f0f] "  
-          >  
-            <option value="casual">Casual</option>  
-            <option value="professional">Professional</option>  
-            <option value="friendly">Friendly</option>  
-            <option value="authoritative">Authoritative</option>  
-            <option value="playful">Playful</option>  
-            <option value="inspiring">Inspiring</option>  
-          </select>  
-        </div>  
-
-        <div>  
-          <label className="block text-sm font-medium text-white mb-2">  
-            Core Beliefs <span className="text-red-500">*</span>  
-          </label>  
-          <p className="text-sm text-white mb-3">What does your brand stand for? Add 2-5 beliefs.</p>  
-
-          <div className="space-y-3">  
-            {formData.beliefs.map((belief, index) => (  
-              <div key={index} className="flex gap-2">  
-                <input  
-                  type="text"  
-                  value={belief}  
-                  onChange={(e) => handleBeliefChange(index, e.target.value)}  
-                  placeholder={`Belief ${index + 1}`}  
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white text-white outline-none transition"  
-                />  
-                {formData.beliefs.length > 1 && (  
-                  <button  
-                    type="button"  
-                    onClick={() => removeBeliefField(index)}  
-                    className="px-4 py-3 bg-[#0f0f0f]  text-red-600 rounded-lg hover:bg-red-100 transition font-medium"  
-                  >  
-                    ✕  
-                  </button>  
-                )}  
-              </div>  
-            ))}  
-          </div>  
-
-          {formData.beliefs.length < 10 && (  
-            <button  
-              type="button"  
-              onClick={addBeliefField}  
-              className="mt-3 px-4 py-2  bg-[#0f0f0f] text-white rounded-lg hover:bg-gray-200 transition text-sm font-medium"  
-            >  
-              + Add Another Belief  
-            </button>  
-          )}  
-        </div>  
-
-        <div>  
-          <label htmlFor="bannedWords" className="block text-sm font-medium text-white mb-2">  
-            Banned Words <span className="text-gray-400 text-xs font-normal">(optional)</span>  
-          </label>  
-          <input  
-            type="text"  
-            id="bannedWords"  
-            name="bannedWords"  
-            value={formData.bannedWords}  
-            onChange={handleInputChange}  
-            placeholder="e.g., cheap, revolutionary, game-changer"  
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-white text-white outline-none transition"  
-          />  
-          <p className="mt-2 text-sm text-white">Comma-separated words to avoid in generated content</p>  
-        </div>  
-
-        <div className="pt-4">  
-          <button  
-            type="submit"  
-            disabled={saving}  
-            className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition-all duration-200 ${  
-              saving  
-                ? 'bg-blue-400 cursor-not-allowed'  
-                : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg'  
-            }`}  
-          >  
-            {saving ? 'Saving...' : 'Save Brand Profile'}  
-          </button>  
-        </div>  
-
-      </form>  
-    </div>  
-  </div>  
-</div>
-
-);
+          <button
+            type="submit"
+            disabled={saving}
+            className="btn-primary w-full py-3 text-base"
+          >
+            {saving ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                Saving...
+              </span>
+            ) : "Save Brand Profile"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default BrandSetup;
