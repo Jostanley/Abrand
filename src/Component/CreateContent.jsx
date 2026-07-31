@@ -25,6 +25,12 @@ function CreateContent() {
   const [plan, setPlan] = useState("free");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
+const [formData, setFormData] = useState({
+    niche: '',
+    tone: 'casual',
+    beliefs: ['', '', ''],
+    bannedWords: '',
+  });
   // PWA install prompt
   useEffect(() => {
     const handler = (e) => {
@@ -88,6 +94,42 @@ function CreateContent() {
     }
   }, [outputs]);
 
+useEffect(()=>{
+  const loadBrandProfile = async () => {
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('brandProfiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setFormData({
+          niche: data.niche || '',
+          tone: data.tone || 'casual',
+          beliefs: data.core_beliefs?.length ? data.core_beliefs : ['', '', ''],
+          bannedWords: Array.isArray(data.banned_words)
+            ? data.banned_words.join(', ')
+            : data.banned_words || '',
+        });
+      }
+    } catch (err) {
+      console.error('Error loading brand profile:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  },[])
   const handleGenerate = async () => {
     if (!isSubscribed) {
       navigate("/subscription");
@@ -112,7 +154,11 @@ function CreateContent() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${data.session.access_token}`,
         },
-        body: JSON.stringify({ message: idea }),
+        body: JSON.stringify({ message: idea,
+       prompt_niche: formData.niche,
+    prompt_tone: formData.tone,
+    prompt_beliefs: formData.beliefs,
+    prompt_bannedWords: formData.bannedWords}),
       });
 
       const json = await res.json();
